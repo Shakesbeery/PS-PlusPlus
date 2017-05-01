@@ -1,0 +1,211 @@
+Program:
+    statements += Statement+
+;
+
+Statement:
+    ImportStatement | CompoundStatement | SimpleStatement
+;
+
+CompoundStatement:
+    if=IfStatement | for=ForStatement | func=Function | class=Class
+;
+
+Suite:
+    Statement+ 
+;
+
+IfStatement:
+    'if' Test '{' Suite '}' ('elif' Test '{' Suite '}')* ('else' '{' Suite '}')?
+;
+
+ForStatement:
+    'for' ExpressionList 'in' TestList '{' Suite ('else' '{' Suite '}')? '}'
+;
+
+ExpressionList:
+    Expression (',' Expression)*
+;
+
+Class:
+ 'class' var=ID ('(' ArgList? ')')? '{' Suite '}'
+;
+
+Function: 
+    var=ID '=' '{' ArgList '|' Suite '}'
+;
+
+ArgList:
+    Argument (',' Argument)*
+;
+
+Argument:
+    (Test '=' Test) | Test 
+;
+
+SimpleStatement:
+    SmallStatement (';' SmallStatement)*
+;
+
+NEWLINE:
+	/$/
+;
+
+SmallStatement:
+    flow=FlowStatement | expr=ExpressionStatement
+;
+
+ExpressionStatement:
+    TestList ((AugAssign TestList) | ('=' TestList)*)
+;
+
+AugAssign:
+    '+=' | '-=' | '*=' | '@=' | '/=' | '%=' | '&=' | '|=' | '^=' | '<<=' | '>>=' | '**=' | '\/\/='
+;
+
+FlowStatement:
+    BreakStatement | ContinueStatement | ReturnStatement
+;
+
+BreakStatement:
+    'break'
+;
+
+ContinueStatement:
+    'continue'
+;
+
+ReturnStatement:
+    'return' TestList?
+;
+
+TestList:
+    Test (',' Test)*
+;
+
+ImportStatement:
+    ImportName | ImportFrom
+;
+
+ImportName:
+    'import' DottedAsNames
+;
+
+ImportFrom:
+    ('from' (('.' | '...')* DottedName | ('.' | '...')+) 'import' ('*' | '(' ImportAsNames ')' | ImportAsNames))
+;
+
+ImportAsName:
+    var=ID ('as' var=ID)?
+;
+
+DottedAsName:
+    DottedName ('as' var=ID)?
+;
+
+ImportAsNames:
+    ImportAsName (',' ImportAsName)*
+;
+
+DottedAsNames:
+    DottedAsName (',' DottedAsName)*
+;
+
+DottedName:
+    var=ID ('.' var=ID)*
+;
+
+Test:
+    OrTest ('if' OrTest 'else' Test)?
+;
+
+OrTest:
+    AndTest ('or' AndTest)*
+;
+
+AndTest:
+    NotTest ('and' NotTest)*
+;
+
+NotTest:
+    ('not' NotTest) | Comparison
+;
+
+Comparison:
+    Expression (ComparisonOperator Expression)*
+;
+
+ComparisonOperator:
+    '<' | '>' | '==' | '>=' | '<=' | '<>' | '!=' | 'in' | ('not' 'in') | 'is' | ('is' 'not')
+;
+
+Expression:
+    XorExpression ('||' XorExpression)*
+;
+
+XorExpression:
+    AndExpression ('^' AndExpression)*
+;
+
+AndExpression:
+    ShiftExpression ('&' ShiftExpression)*
+;
+
+ShiftExpression:
+    ArithmeticExpression (('<<' | '>>') ArithmeticExpression)*
+;
+
+ArithmeticExpression:
+    Term (('+' | '-') Term)*
+;
+
+Term:
+    Factor (('*' | '/' | '%') Factor)*
+;
+
+Factor:
+    (('+' | '-') Factor) | Power
+;
+
+Power:
+    Atom Trailer*
+;
+
+Trailer:
+    ('(' ArgList? ')') | ('[' SubscriptList ']') | ('.' ID)
+;
+
+Atom: 
+    ('(' ListHashMaker? ')') |
+    ('[' ListHashMaker? ']') |
+    ('{' ListHashMaker? '}') |
+    var=ID | val=Number | STRING+
+;
+
+SubscriptList:
+    Subscript (',' Subscript)*
+;
+
+Subscript:
+    Test | (Test? ':' Test? SliceOperation?)
+;
+
+SliceOperation:
+    ':' Test?
+;
+
+ListHashMaker:
+	Test (',' Test)*
+;
+
+Number:
+	float=Float | int=Int
+;
+
+Float:
+	/[0-9]*\.[0-9]+/ | /[0-9]+\.[0-9]*/
+;
+
+Int:
+	INT
+;
+
