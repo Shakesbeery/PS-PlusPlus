@@ -18,7 +18,7 @@ class Feature (array) {
     }
 
     outlier = { |
-        smean(data_type)
+        mean(data_type)
         sd(data_type)
         @bounds['bottom'] = @avg - @three_sigma
         @bounds['top'] = @avg + @three_sigma
