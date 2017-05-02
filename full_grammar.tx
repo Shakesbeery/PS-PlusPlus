@@ -31,7 +31,7 @@ Class:
 ;
 
 Function: 
-    var=ID '=' '{' ArgList '|' Suite '}'
+    var=ID '=' '{' ArgList? '|' Suite '}'
 ;
 
 ArgList:
@@ -178,7 +178,7 @@ Atom:
     ('(' ListHashMaker? ')') |
     ('[' ListHashMaker? ']') |
     ('{' ListHashMaker? '}') |
-    var=ID | val=Number | STRING+
+    ("@"? ID) | val=Number | STRING+
 ;
 
 SubscriptList:
@@ -194,7 +194,7 @@ SliceOperation:
 ;
 
 ListHashMaker:
-	Test (',' Test)*
+	(Test ((','|':') Test)*)
 ;
 
 Number:
